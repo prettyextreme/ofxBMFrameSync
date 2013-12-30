@@ -3,13 +3,25 @@
 
 #include "DeckLinkAPI.h"
 #include "ofMain.h"
+#include "OpenGL/OpenGL.h"
 
-class ofxBMFrameSync
+#include "MSATimer.h"
+
+#include "ofxNetwork.h"
+
+class ofxBMFrameSync : ofThread
 {
 public:
     ofxBMFrameSync();
     ~ofxBMFrameSync();
     bool setup();
+    
+    void threadedFunction();
+    bool exitThreadFlag;
+    
+    void externLock(){lock();}
+    void externUnlock(){unlock();}
+    
     
     float getFramePosition();
     void renderFrame(unsigned char* bytes, int length);
@@ -38,5 +50,19 @@ private:
 	void ResetFrame();
 
 protected:
+    
+private:
+    
+	CGLContextObj		contextObj;
+	CGLContextObj		old_contextObj;
+    
+    ofFbo fbo;
+    ofPixels pix;
+    
+    msa::Timer msatimer;
+    
+    ofxUDPManager udp;
+    
+    bool isSlave;
 
 };
